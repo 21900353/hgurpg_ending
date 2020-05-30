@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.InputStream;
+import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -29,19 +29,20 @@ public class HandongStart implements ActionListener {
 		public HandongStart(){			
 			//System.out.print(What is this?");
 			
+			// resources 폴더에서 가져오기
 			try {
-				InputStream logo = this.getClass().getResourceAsStream("/img/logo.png");
-				icon = new ImageIcon(ImageIO.read(logo));
+				BufferedImage imgLogo = ImageIO.read(this.getClass().getResource("/resources/img/logo.png"));
+				icon = new ImageIcon(imgLogo);
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(null, "/img/logo.png 파일 읽기 오류", "오류", JOptionPane.ERROR_MESSAGE);
-			}			
+				JOptionPane.showMessageDialog(null, "로고 이미지파일 읽기 오류", "오류", JOptionPane.ERROR_MESSAGE);
+			}
 			
 			f1 = new JFrame();
 			@SuppressWarnings("serial")
 			JPanel p1 = new JPanel() {
 				public void paintComponent(Graphics g) {
-					g.drawImage(icon.getImage(), 0, 0, 168, 54, null);
+					g.drawImage(icon.getImage(), 50, 50, 168, 54, null);
 					setOpaque(false);
 					super.paintComponent(g);
 				}
@@ -56,7 +57,7 @@ public class HandongStart implements ActionListener {
 			
 			
 			JButton b1 = new JButton("New start");
-			JButton b2 = new JButton("Resume");
+			JButton b2 = new JButton("Ending");	// ***** 엔딩 여기 *****
 			JButton b3 = new JButton("End");
 			b1.setBounds(((c_size-150)/2),280,150,80);
 			b2.setBounds(((c_size-150)/2),370,150,80);
@@ -82,8 +83,10 @@ public class HandongStart implements ActionListener {
 			if(e.getActionCommand() == "New start") {
 				//new GetCharacter();
 			}
-			if(e.getActionCommand() == "Resume") {
-				//불러오기 파
+			// ***** 엔딩 여기 *****
+			if(e.getActionCommand() == "Ending") {
+				//Screenshot.captureScreen(f1);
+				new EndingAnimation();
 			}
 			if(e.getActionCommand() == "End") {
 				System.exit(0);
