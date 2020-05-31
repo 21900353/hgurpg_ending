@@ -1,6 +1,7 @@
 package ending;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,20 +16,28 @@ import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
 
 public class EndingAnimation extends JFrame {
+	private JFrame frame;
+	
+	// animation
+	private JLayeredPane animation;
+	
 	// slideshow
 	private JLabel scrSlideshow;
 	private String[] scrArr = {
 			"img/scr0.png",
 			"img/scr1.png",
-			"img/scr2.png"
+			"img/scr2.png",
+			"img/scr3.png"
 			};
-	Timer tm;
+	private Timer tm;
 	private int i = 0;
 	
 	// user picture
@@ -42,10 +51,14 @@ public class EndingAnimation extends JFrame {
 	
 	public EndingAnimation() {
 		super("Ending");
+		frame = new JFrame("Ending");
+		
+		animation = new JLayeredPane();
+		
 		scrSlideshow = new JLabel();
 		scrSlideshow.setBounds(0, 0, 320, 620);
 		
-		tm = new Timer(2000, new ActionListener() {
+		tm = new Timer(3000, new ActionListener() {
 			@Override
             public void actionPerformed(ActionEvent e) {
 				scrSlideshow.setIcon(new ImageIcon(scrArr[i]));
@@ -59,15 +72,14 @@ public class EndingAnimation extends JFrame {
 		
 		player = new JLabel();
 		
-		text = new JLabel("그 땐 그랬지...");
+		text = new JLabel("졸업이다.....");
 
-		scrSlideshow.setLayout(new BorderLayout());
-		add(scrSlideshow);
+		frame.setContentPane(animation);
 				
 		// Window
-		setLayout(null);
-        setSize(320, 620);
-        setVisible(true);
+		//frame.setLayout(null);
+		frame.setSize(320, 620);
+        frame.setVisible(true);
 
         startEnding();	// call everything
 	}
@@ -76,18 +88,18 @@ public class EndingAnimation extends JFrame {
 	// ***** METHODS *****
 	
 	public void startEnding() {
-		tm.start();
+		showSlideshow();
 		playBGM();
 		
 		// Stop bgm when closing
-		this.addWindowListener(new WindowAdapter(){
+		frame.addWindowListener(new WindowAdapter(){
             public void windowClosing(WindowEvent e){
                 stopBGM();
             }
         });
 		
 		drawPlayer();
-		//showText();
+		showText();
 	}
 		
 	public void playBGM() {
@@ -105,14 +117,23 @@ public class EndingAnimation extends JFrame {
 		clip.stop();
 	}
 	
+	public void showSlideshow() {
+		animation.setPreferredSize(new Dimension(320, 620));
+		animation.setLayer(scrSlideshow, 1);	// (component, depth)
+		animation.add(scrSlideshow, 1);
+		tm.start();
+	}
+	
 	public void drawPlayer() {
 		try {
 			BufferedImage imgPlayer = ImageIO.read(this.getClass().getResource("/resources/img/user_graduation.png"));
 			ImageIcon icon = new ImageIcon(imgPlayer);
 			player.setIcon(icon);
-			player.setVerticalAlignment(JLabel.BOTTOM);
+			player.setBounds(0, 620-127-15, 129, 127);
+			//player.setVerticalAlignment(JLabel.BOTTOM);
 			player.setBorder(new EmptyBorder(0,0,38,0));
-			scrSlideshow.add(player);
+			animation.setLayer(player, 2);
+			animation.add(player, 2);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -121,9 +142,12 @@ public class EndingAnimation extends JFrame {
 	}
 	
 	public void showText() {
-		text.setHorizontalAlignment(JLabel.CENTER);
-		text.setVerticalAlignment(JLabel.CENTER);
-		text.setFont(new Font("궁서", Font.ITALIC, 40));
-		scrSlideshow.add(text);
+		//text.setHorizontalAlignment(JLabel.CENTER);
+		//text.setVerticalAlignment(JLabel.CENTER);
+		text.setBounds(50, 300, 300, 100);
+		text.setFont(new Font("궁서", Font.ITALIC, 30));
+		//scrSlideshow.add(text);
+		animation.setLayer(text, 3);
+		animation.add(text, 3);
 	}
 }
